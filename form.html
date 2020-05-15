@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Visa Assist</title>
+    <meta content="" name="descriptison">
+    <meta content="" name="keywords">
+
+
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+
+    <!-- script CSS Files -->
+    <link href="assets/script/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/script/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/script/ionicons/css/ionicons.min.css" rel="stylesheet">
+    <link href="assets/script/animate.css/animate.min.css" rel="stylesheet">
+    <link href="assets/script/venobox/venobox.css" rel="stylesheet">
+    <link href="assets/script/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <?php
+    require_once "classes/Database.php";
+    require_once "classes/Category.php";
+    require_once "classes/Question.php";
+    require_once "classes/AnswerOption.php";
+
+    $category = new Category();
+    $categories = $category->getActiveCategories();
+
+    if(isset($_GET['category_id']) && $_GET['category_id'] > 0)
+    {
+        $categoryId =   (int) $_GET['category_id'];
+
+        $questionObj =  new Question();
+        $questions = $questionObj->getActiveQuestionsByCategoryId($categoryId);
+
+        $answerOptionObj =  new AnswerOption();
+
+        $i = 1;
+        foreach($questions as $question)
+        {
+            echo $i++." ".$question['question'];
+            $options = $answerOptionObj->getActiveQuestionOptionsByQuestionId($question['id']);
+            echo "<br />";
+            $j =1 ;
+            foreach($options as $option)
+            {?>
+                <input type="<?php echo  $question['html_form_option']; ?>" name="answer_id_<?php echo $question['id'];?>">
+                <?php
+                echo " &nbsp;&nbsp;&nbsp;&nbsp;". $j++.".  ". $option['answer_option']." <br/>";
+            }
+
+            echo "<br /> <br />";
+
+        }
+        ?>
+        <?php
+    }
+
+    ?>
+</body>
+</html>
